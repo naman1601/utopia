@@ -213,7 +213,7 @@ void solve() {
 
 		while(n_children-- > 0) {
 
-			bool child_gene[10] = {false};
+			bool child_gene[num_genes] = {false};
 			int pp = 0;
 			int child_id = *(inactive.begin());
 			int child_iq = 50;
