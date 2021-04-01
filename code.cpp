@@ -83,16 +83,22 @@ template <typename T, typename S> ostream& operator<<(ostream& os, map<T, S>& v)
 	return os;
 }
 
+int initial_population = 250000;
+int final_population = 1000000;
+int save_ratio = 90;
+const int num_genes = 25;
+int gene_contribution = 4;
+
 
 struct node {
 
 	bool active = false;
 	int iq = 50;
-	bool gene[10];
+	bool gene[num_genes];
 };
 
 
-double purge(vector<node>& v, set<int>& available, set<int>& inactive, int final_population) {
+double purge(vector<node>& v, set<int>& available, set<int>& inactive) {
 
 	double retval = 0;
 	maxheap<pii> heap; //<iq, index>
@@ -111,7 +117,7 @@ double purge(vector<node>& v, set<int>& available, set<int>& inactive, int final
 	v.clear();
 	v = vector<node>(final_population);
 
-	while(pp < (int)(0.25 * final_population)) {
+	while(pp < (int)(0.01 * save_ratio * final_population)) {
 
 		retval += heap.top().fe;
 		v[pp] = temp[heap.top().se];
@@ -123,16 +129,16 @@ double purge(vector<node>& v, set<int>& available, set<int>& inactive, int final
 
 	while(!heap.empty()) {
 
-		available.erase(heap.top().se);
-		inactive.insert(heap.top().se);
-		v[heap.top().se].active = false;
+		// available.erase(heap.top().se);
+		// inactive.insert(heap.top().se);
+		// v[heap.top().se].active = false;
 		// retval -= heap.top().fe;
 		heap.pop();
 		inactive.insert(pp);
 		pp++;
 	}
 
-	return retval / (final_population / 4);
+	return retval / (0.01 * save_ratio * final_population);
 }
 
 
@@ -142,9 +148,9 @@ void solve() {
 
 	int initial_population = 250000;
 	int final_population = 1000000;
+	
 	int current_population = 0;
 	int purge_count = 1;
-
 	double avg = 0;
 
 	vector<node> v(final_population);
@@ -155,14 +161,14 @@ void solve() {
 
 		v[i].active = true;
 
-		fr(j, 0, 10) {
+		fr(j, 0, num_genes) {
 
 			int prob = (rand() % 2) + 1;
 
 			if(prob == 1) {
 
 				v[i].gene[j] = true;
-				v[i].iq += 10;
+				v[i].iq += gene_contribution;
 			}
 		}
 
@@ -213,14 +219,14 @@ void solve() {
 			int child_iq = 50;
 			inactive.erase(child_id);
 
-			while(pp < 5) {
+			while(pp < num_genes / 2) {
 
 				set<int> used;
 				int gene_ID;
 
 				do {
 
-					gene_ID = (rand() % 10);
+					gene_ID = (rand() % num_genes);
 
 				} while(used.find(gene_ID) != used.end());
 
@@ -229,20 +235,20 @@ void solve() {
 
 				if(child_gene[pp]) {
 
-					child_iq += 10;
+					child_iq += gene_contribution;
 				}
 
 				pp++;
 			}
 
-			while(pp < 10) {
+			while(pp < num_genes) {
 
 				set<int> used;
 				int gene_ID;
 
 				do {
 
-					gene_ID = (rand() % 10);
+					gene_ID = (rand() % num_genes);
 
 				} while(used.find(gene_ID) != used.end());
 
@@ -251,14 +257,14 @@ void solve() {
 
 				if(child_gene[pp]) {
 
-					child_iq += 10;
+					child_iq += gene_contribution;
 				}
 
 				pp++;
 			}
 
 
-			fr(i, 0, 10) {
+			fr(i, 0, num_genes) {
 
 				v[child_id].gene[i] = child_gene[i];
 			}
@@ -278,8 +284,8 @@ void solve() {
 
 		if(current_population == final_population) {
 
-			avg = purge(v, available, inactive, final_population);
-			current_population = final_population / 4;
+			avg = purge(v, available, inactive);
+			current_population = 0.01 * save_ratio * final_population;
 
 			cout << "After purge # " << purge_count++ << ", average IQ is: " << avg << endl;
 		}
