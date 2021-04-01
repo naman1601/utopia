@@ -83,9 +83,6 @@ void simulate() {
 
 	srand((unsigned) time(0));
 
-	int initial_population = 250000;
-	int final_population = 1000000;
-	
 	int current_population = 0;
 	int purge_count = 1;
 	double avg = 0;
