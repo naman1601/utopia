@@ -23,65 +23,6 @@ const big infinity = 1000000000000000000;
 bool do_debug = false;
 
 
-template <typename T> ostream& operator<<(ostream& os, vector<T>& v) {
-	
-	for(auto element : v) {
-
-		os << element << " ";
-	}
-
-	return os;
-}
-
-template <typename T, typename S> ostream& operator<<(ostream& os, pair<T, S>& p) {
-	
-	os << "(" << p.first << ", " << p.second << ")";
-	return os;
-}
-
-template <typename T> ostream& operator<<(ostream& os, set<T>& v) {
-
-	auto endit = v.end();
-	endit--;
-
-	os << "[";
-	
-	for(auto it = v.begin(); it != v.end(); it++) {
-
-		os << *it;
-
-		if(it != endit) {
-
-			os << ", ";
-		}
-	}
-
-	os << "]";
-
-	return os;
-}
-
-template <typename T, typename S> ostream& operator<<(ostream& os, map<T, S>& v) {
-	
-	auto endit = v.end();
-	endit--;
-
-	os << "{";
-	
-	for(auto it = v.begin(); it != v.end(); it++) {
-
-		os << "(" << (*it).first << " : " << (*it).second << ")";
-
-		if(it != endit) {
-
-			os << ", ";
-		}
-	}
-
-	os << "}";
-
-	return os;
-}
 
 int initial_population = 250000;
 int final_population = 1000000;
@@ -129,10 +70,6 @@ double purge(vector<node>& v, set<int>& available, set<int>& inactive) {
 
 	while(!heap.empty()) {
 
-		// available.erase(heap.top().se);
-		// inactive.insert(heap.top().se);
-		// v[heap.top().se].active = false;
-		// retval -= heap.top().fe;
 		heap.pop();
 		inactive.insert(pp);
 		pp++;
@@ -142,7 +79,7 @@ double purge(vector<node>& v, set<int>& available, set<int>& inactive) {
 }
 
 
-void solve() {
+void simulate() {
 
 	srand((unsigned) time(0));
 
@@ -189,8 +126,6 @@ void solve() {
 
 	while(true) {
 
-		// cout << available << endl << inactive << endl;
-
 		int parent_1, parent_2;
 
 		do {
@@ -220,9 +155,6 @@ void solve() {
 			inactive.erase(child_id);
 
 			while(pp < num_genes) {
-
-				// set<int> used;
-				// int gene_ID;
 
 				if(v[parent_1].gene[pp] && v[parent_2].gene[pp]) {
 
@@ -274,16 +206,7 @@ void solve() {
 
 
 int main() {
-	
-	speed;
 
-	int q = 1;
-	// cin >> q;
-
-	while(q-- > 0) {
-
-		solve();
-	}
-
+	simulate();
 	return 0;
 }
