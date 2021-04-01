@@ -85,15 +85,15 @@ template <typename T, typename S> ostream& operator<<(ostream& os, map<T, S>& v)
 
 int initial_population = 250000;
 int final_population = 1000000;
-int save_ratio = 90;
+int save_ratio = 99;
 const int num_genes = 25;
-int gene_contribution = 4;
+float gene_contribution = 4;
 
 
 struct node {
 
 	bool active = false;
-	int iq = 50;
+	float iq = 50;
 	bool gene[num_genes];
 };
 
@@ -216,48 +216,28 @@ void solve() {
 			bool child_gene[num_genes] = {false};
 			int pp = 0;
 			int child_id = *(inactive.begin());
-			int child_iq = 50;
+			float child_iq = 50;
 			inactive.erase(child_id);
-
-			while(pp < num_genes / 2) {
-
-				set<int> used;
-				int gene_ID;
-
-				do {
-
-					gene_ID = (rand() % num_genes);
-
-				} while(used.find(gene_ID) != used.end());
-
-				used.insert(gene_ID);
-				child_gene[pp] = v[parent_1].gene[gene_ID];
-
-				if(child_gene[pp]) {
-
-					child_iq += gene_contribution;
-				}
-
-				pp++;
-			}
 
 			while(pp < num_genes) {
 
-				set<int> used;
-				int gene_ID;
+				// set<int> used;
+				// int gene_ID;
 
-				do {
+				if(v[parent_1].gene[pp] && v[parent_2].gene[pp]) {
 
-					gene_ID = (rand() % num_genes);
-
-				} while(used.find(gene_ID) != used.end());
-
-				used.insert(gene_ID);
-				child_gene[pp] = v[parent_2].gene[gene_ID];
-
-				if(child_gene[pp]) {
-
+					child_gene[pp] = true;
 					child_iq += gene_contribution;
+
+				} else if(v[parent_1].gene[pp] || v[parent_2].gene[pp]) {
+
+					int prob = (rand() % 100) + 1;
+
+					if(prob <= 50) {
+
+						child_gene[pp] = true;
+						child_iq += gene_contribution;
+					}
 				}
 
 				pp++;
